@@ -1,10 +1,10 @@
 /* ================================================
-   TRAEL TRANSFORMADORES — DASHBOARD STYLE
-   Design System: Green Identity + BI Dark Theme
+   TRAEL TRANSFORMADORES — ESTILO DO DASHBOARD
+   Sistema de Design: Identidade Verde + Tema Escuro BI
    ================================================ */
 
 :root {
-  /* Primary Green Palette */
+  /* Paleta Verde Primária */
   --green-900: #1B5E20;
   --green-800: #2E7D32;
   --green-700: #388E3C;
@@ -15,7 +15,7 @@
   --green-100: #E8F5E9;
   --green-glow: rgba(213, 241, 214, 0.829);
 
-  /* Neutral Palette */
+  /* Paleta Neutra */
   --bg-deep: #0D1117;
   --bg-dark: #161B22;
   --bg-card: #1C2333;
@@ -24,26 +24,26 @@
   --border: rgba(255, 255, 255, 0.07);
   --border-focus: rgba(76, 175, 80, 0.6);
 
-  /* Text */
+  /* Texto */
   --text-primary: #E6EDF3;
   --text-secondary: #8B949E;
   --text-muted: #586069;
 
-  /* Semantic */
+  /* Semântica */
   --success: #4CAF50;
   --warning: #FFA726;
   --danger: #EF5350;
   --info: #42A5F5;
 
-  /* Sidebar */
+  /* Barra Lateral */
   --sidebar-w: 220px;
 
-  /* Animation */
+  /* Animação */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --duration: 0.25s;
 }
 
-/* --- LIGHT THEME OVERRIDES --- */
+/* --- SOBREPOSIÇÕES DO TEMA CLARO --- */
 body.light-theme {
   --bg-deep: #FFFFFF;
   --bg-dark: #F5F7F8;
@@ -63,7 +63,7 @@ body.light-theme .dashboard-header {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-/* CHART CARDS (MODO CLARO EM BLOCOS) */
+/* CARTÕES DE GRÁFICO (MODO CLARO EM BLOCOS) */
 .chart-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -117,7 +117,7 @@ body.light-theme .nav-item:hover {
   background: rgba(0, 0, 0, 0.03);
 }
 
-/* ---- RESET ---- */
+/* ---- RESETAR ---- */
 *,
 *::before,
 *::after {
@@ -144,7 +144,7 @@ body {
 }
 
 /* ================================================
-   SIDEBAR
+   BARRA LATERAL
    ================================================ */
 .sidebar {
   width: var(--sidebar-w);
@@ -230,7 +230,7 @@ body {
 }
 
 /* ================================================
-   MAIN CONTENT
+   CONTEÚDO PRINCIPAL
    ================================================ */
 .main-content {
   margin-left: var(--sidebar-w);
@@ -258,7 +258,7 @@ body {
 }
 
 /* ================================================
-   DASHBOARD PAGE
+   PÁGINA DO DASHBOARD
    ================================================ */
 .dashboard-header {
   background: linear-gradient(135deg, var(--bg-dark) 0%, #0f2010 100%);
@@ -317,7 +317,7 @@ body {
   gap: 20px;
 }
 
-/* THEME TOGGLE */
+/* ALTERNAR TEMA */
 .theme-toggle {
   background: var(--bg-card-alt);
   border: 1px solid var(--border);
@@ -426,7 +426,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   KPI SECTION
+   SEÇÃO DE KPI
    ================================================ */
 .kpi-section {
   display: grid;
@@ -571,7 +571,7 @@ body.light-theme .theme-toggle {
   color: #81C784;
 }
 
-/* VARIATIONS FOR CORE TYPES */
+/* VARIAÇÕES PARA TIPOS DE NÚCLEO */
 .core-enr {
   border-left: 4px solid #9CCC65;
 }
@@ -604,7 +604,7 @@ body.light-theme .theme-toggle {
   color: #D32F2F;
 }
 
-/* GAUGE */
+/* MEDIDOR (GAUGE) */
 .gauge-container {
   position: relative;
   display: flex;
@@ -642,7 +642,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   LINES SECTION
+   SEÇÃO DE LINHAS
    ================================================ */
 .lines-section {
   padding: 0 28px 20px;
@@ -789,7 +789,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   CHART SECTION
+   SEÇÃO DE GRÁFICOS
    ================================================ */
 .chart-section {
   padding: 0 28px 20px;
@@ -849,7 +849,7 @@ body.light-theme .theme-toggle {
   height: 100% !important;
 }
 
-/* BI CONTAINER (Chart + Table) */
+/* CONTAINER BI (Gráfico + Tabela) */
 .bi-container {
   display: flex;
   flex-direction: column;
@@ -978,7 +978,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   ANALYSIS SECTION
+   SEÇÃO DE ANÁLISE
    ================================================ */
 .analysis-section {
   display: grid;
@@ -1011,6 +1011,128 @@ body.light-theme .theme-toggle {
 
 .kpi-body:empty {
   display: none;
+}
+
+/* ================================================
+   SOBREPOSIÇÃO DE LOGIN E PERFIL
+   ================================================ */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--duration) var(--ease), visibility var(--duration);
+}
+
+.login-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.login-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.btn-login {
+  background: linear-gradient(90deg, var(--green-800), var(--green-500));
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  transition: transform var(--duration);
+}
+
+.btn-login:hover {
+  transform: scale(1.02);
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 13px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.user-profile {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.user-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.user-role {
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+/* ================================================
+   RBAC - LÓGICA DE OCULTAÇÃO (Controle de Acesso)
+   ================================================ */
+
+/* Níveis de cor dinâmicos (Classes do Body) */
+body.role-programador {
+  --accent: #00E5FF; /* Ciano/Neon */
+}
+body.role-coordenador {
+  --accent: #2962FF; /* Azul Cobalto */
+}
+body.role-alimentador {
+  --accent: #00C853; /* Verde Esmeralda */
+}
+body.role-visualizador {
+  --accent: #757575; /* Cinza/Âmbar */
+  --green-400: #FFB300; /* Amber para destaques no visualizador */
+  --green-500: #FFA000;
+  --green-800: #FF8F00;
+}
+
+/* Ocultando Elementos com base na Função */
+body.role-visualizador .rbac-hide-visualizador,
+body.role-visualizador .rbac-hide-visualizador-content,
+body.role-alimentador .rbac-hide-alimentador {
+  display: none !important;
+}
+
+/* Especificamente para colunas de Ação da Tabela no Visualizador */
+body.role-visualizador .data-table th:last-child,
+body.role-visualizador .data-table td:last-child {
+  display: none !important;
+}
+
+/* Ocultar Exportação de Relatório se Visualizador */
+body.role-visualizador .btn-export-report {
+  display: none !important;
 }
 
 .meta-card {
@@ -1091,7 +1213,7 @@ body.light-theme .theme-toggle {
   margin-top: 4px;
 }
 
-/* Equipment */
+/* Equipamento */
 .equipment-card h3 {
   margin-bottom: 14px;
 }
@@ -1159,7 +1281,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   FOOTER
+   RODAPÉ
    ================================================ */
 .dashboard-footer {
   padding: 12px 28px;
@@ -1172,7 +1294,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   UPLOAD PAGE
+   PÁGINA DE UPLOAD
    ================================================ */
 .page-inner {
   padding: 28px;
@@ -1290,7 +1412,7 @@ body.light-theme .theme-toggle {
   overflow-x: auto;
 }
 
-/* Manual form */
+/* Formulário Manual */
 .manual-entry {
   background: var(--bg-card-alt);
   border: 1px solid var(--border);
@@ -1427,7 +1549,7 @@ body.light-theme .theme-toggle {
   background: rgba(239, 83, 80, 0.18);
 }
 
-/* Data Table */
+/* Tabela de Dados */
 .table-header-row {
   display: flex;
   justify-content: space-between;
@@ -1515,7 +1637,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   SETTINGS PAGE
+   PÁGINA DE CONFIGURAÇÕES
    ================================================ */
 .settings-grid {
   display: grid;
@@ -1603,7 +1725,7 @@ body.light-theme .theme-toggle {
   color: var(--text-primary);
 }
 
-/* Equipment Settings */
+/* Configurações de Equipamento */
 .equip-setting-row {
   display: grid;
   grid-template-columns: 1fr 180px auto;
@@ -1645,7 +1767,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   SCROLLBAR
+   BARRA DE ROLAGEM
    ================================================ */
 ::-webkit-scrollbar {
   width: 6px;
@@ -1666,7 +1788,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   ANIMATIONS
+   ANIMAÇÕES
    ================================================ */
 @keyframes fadeInUp {
   from {
@@ -1721,7 +1843,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   RESPONSIVE
+   RESPONSIVO
    ================================================ */
 @media (max-width: 1200px) {
   .kpi-section {
@@ -1792,7 +1914,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   REPORT SECTION (RULE 4)
+   SEÇÃO DE RELATÓRIO (REGRA 4)
    ================================================ */
 .report-section {
   padding: 0 28px 20px;
@@ -1881,7 +2003,7 @@ body.light-theme .theme-toggle {
 }
 
 /* ================================================
-   UPLOAD TABS
+   ABAS DE UPLOAD
    ================================================ */
 .upload-tabs {
   display: flex;
@@ -1931,7 +2053,7 @@ body.light-theme .theme-toggle {
   display: flex;
 }
 
-/* RECENT TABLE WRAPPER */
+/* WRAPPER DA TABELA RECENTE */
 .table-container {
   overflow-x: auto;
   border-radius: 8px;

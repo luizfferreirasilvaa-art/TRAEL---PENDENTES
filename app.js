@@ -1,14 +1,96 @@
 /* =====================================================
-   TRAEL DASHBOARD — app.js
-   Supabase Integration, State, Chart, Upload, Settings
+   DASHBOARD TRAEL — app.js
+   Integração Supabase, Estado, Gráficos, Upload, Configurações
    ===================================================== */
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://fmhmqlamcxihqppromxc.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtaG1xbGFtY3hpaHFwcHJvbXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjUxNTMsImV4cCI6MjA5MTI0MTE1M30.nUPeRNBZyVyUWedlHjXZSohtp8uHBPkxrDXIyYrFIeg';
+// Configuração do Supabase
+const SUPABASE_URL = 'https://nkfnavskpbljffihepfo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_wm-PwAAMoMLGMF9WXpOOIA_exqCcxi1';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ====================== STATE ======================
+// ====================== AUTENTICAÇÃO E RBAC ======================
+const USERS = {
+  'admin.trael@trael.cto': { role: 'programador', pass: '183729', name: 'Programador (Admin)' },
+  'gerencia@trael.com': { role: 'coordenador', pass: '123456', name: 'Coordenador (Gestão)' },
+  'soma@trael.com': { role: 'alimentador', pass: '123456', name: 'Alimentador (Campo)' },
+  'somavisual@trael.com': { role: 'visualizador', pass: '123456', name: 'Visualizador' }
+};
+
+let currentUser = null;
+
+async function checkSession() {
+  const sessionUser = localStorage.getItem('soma_session');
+  if (sessionUser) {
+    currentUser = JSON.parse(sessionUser);
+    applyRBAC(currentUser.role);
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) overlay.classList.remove('active');
+    
+    // Sync DB and set view
+    try {
+      await loadDataFromDB();
+    } catch (e) {
+      console.warn('Falha no sync inicial do DB:', e);
+    }
+  } else {
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) overlay.classList.add('active');
+  }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPassword').value;
+  const errorEl = document.getElementById('loginError');
+  
+  // Attempt Supabase Auth first
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (!error && data.user) {
+      console.log('Autenticado via Supabase');
+    }
+  } catch(err) {
+    console.warn('Auth Supabase offline, usando fallback local.');
+  }
+
+  // Fallback to local user mapping for prototype
+  const user = USERS[email];
+  if (user && user.pass === pass) {
+    currentUser = { email, role: user.role, name: user.name };
+    localStorage.setItem('soma_session', JSON.stringify(currentUser));
+    if (errorEl) errorEl.textContent = '';
+    applyRBAC(user.role);
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) overlay.classList.remove('active');
+    
+    try {
+      await loadDataFromDB();
+    } catch(err) {}
+  } else {
+    if (errorEl) errorEl.textContent = 'Credenciais inválidas.';
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem('soma_session');
+  sb.auth.signOut();
+  location.reload();
+}
+
+function applyRBAC(role) {
+  // Update Body classes for CSS logic
+  document.body.className = document.body.className.replace(/role-\w+/g, '');
+  document.body.classList.add(`role-${role}`);
+  
+  // Update Profile Panel
+  const userNameEl = document.getElementById('userName');
+  const userRoleEl = document.getElementById('userRole');
+  if (userNameEl && currentUser) userNameEl.textContent = currentUser.name.split(' ')[0];
+  if (userRoleEl && currentUser) userRoleEl.textContent = currentUser.name;
+}
+
+// ====================== ESTADO ======================
 const STATE = {
   config: {
     month: '',            // YYYY-MM
@@ -34,7 +116,7 @@ const STATE = {
   currentUploadArea: 'distrib'
 };
 
-// ====================== SEED SAMPLE DATA ======================
+// ====================== DADOS DE EXEMPLO (SEED) ======================
 function seedSampleData() {
   const now = new Date();
   const year = now.getFullYear();
@@ -67,7 +149,7 @@ function seedSampleData() {
   }
 }
 
-// ====================== DB PERSISTENCE (SUPABASE) ======================
+// ====================== PERSISTÊNCIA NO BANCO (SUPABASE) ======================
 
 async function saveRecordsToDB(records) {
   try {
@@ -183,7 +265,7 @@ function loadFromStorage() {
   }
 }
 
-// ====================== PAGE NAVIGATION ======================
+// ====================== NAVEGAÇÃO DE PÁGINAS ======================
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -216,7 +298,7 @@ function switchUploadTab(area) {
   document.getElementById(contentId).classList.add('active');
 }
 
-// ====================== DATE HELPERS ======================
+// ====================== AUXILIARES DE DATA ======================
 function getMonthLabel(monthStr) {
   if (!monthStr) return '';
   const [y, m] = monthStr.split('-');
@@ -255,7 +337,7 @@ function updateClock() {
   setText('footerTimeForca', `Última atualização: ${dateStr} ${timeStr}`);
 }
 
-// ====================== CORE TYPE DETECTION ======================
+// ====================== DETECÇÃO DE TIPO DE NÚCLEO ======================
 function detectCoreType(desc) {
   if (!desc) return 'EMP';
   const d = desc.toUpperCase();
@@ -265,7 +347,7 @@ function detectCoreType(desc) {
   return 'EMP'; // Padrão convencional
 }
 
-// ====================== COMPUTED METRICS: DISTRIBUIÇÃO (BI) ======================
+// ====================== MÉTRICAS CALCULADAS: DISTRIBUIÇÃO (BI) ======================
 function computeDistribMetrics() {
   const cfg = STATE.config;
   const currentMonthPrefix = cfg.month;
@@ -307,7 +389,7 @@ function computeDistribMetrics() {
   return { dailyByCore, totals, medias, totalReal, tendencia, daysInMonth };
 }
 
-// ====================== COMPUTED METRICS: MÉDIA FORÇA / SECO ======================
+// ====================== MÉTRICAS CALCULADAS: MÉDIA FORÇA / SECO ======================
 function computeForcaMetrics() {
   const cfg = STATE.config;
   const monthPrefix = cfg.month;
@@ -342,7 +424,7 @@ function computeForcaMetrics() {
   return { daily, totals, pct, tendencia, daysInMonth };
 }
 
-// ====================== STANDARDIZED REPORT ENGINE (RULE 4) ======================
+// ====================== MOTOR DE RELATÓRIO PADRONIZADO (REGRA 4) ======================
 function generateExecutiveReport(area, m) {
   const cfg = STATE.config;
   const isHealthy = m.tendencia >= cfg.metaTotal;
@@ -387,7 +469,7 @@ function generateExecutiveReport(area, m) {
   return html;
 }
 
-// ====================== RENDER DASHBOARD: DISTRIBUIÇÃO (TPD) ======================
+// ====================== RENDERIZAR DASHBOARD: DISTRIBUIÇÃO (TPD) ======================
 function renderDashboardDistrib() {
   const m = computeDistribMetrics();
   const cfg = STATE.config;
@@ -411,7 +493,7 @@ function renderDashboardDistrib() {
   if (reportEl) reportEl.innerHTML = generateExecutiveReport('distrib', m);
 }
 
-// ====================== RENDER DASHBOARD: MÉDIA FORÇA / SECO ======================
+// ====================== RENDERIZAR DASHBOARD: MÉDIA FORÇA / SECO ======================
 function renderDashboardForca() {
   const m = computeForcaMetrics();
   const cfg = STATE.config;
@@ -450,7 +532,7 @@ function setText(id, val) {
   if (el) el.textContent = val;
 }
 
-// ====================== BI GRID TABLE ======================
+// ====================== TABELA DE GRADE BI ======================
 function renderBITable(m) {
   const container = document.getElementById('distribTableContainer');
   if (!container) return;
@@ -551,7 +633,7 @@ function renderLines(byLine) {
   });
 }
 
-// ====================== CHARTS: DISTRIBUIÇÃO ======================
+// ====================== GRÁFICOS: DISTRIBUIÇÃO ======================
 function renderDistribCharts(m) {
   const ctxQty = document.getElementById('chartDistribQty');
   const ctxPct = document.getElementById('chartDistribPct');
@@ -613,7 +695,7 @@ function renderDistribCharts(m) {
   });
 }
 
-// ====================== CHARTS: MÉDIA FORÇA / SECO ======================
+// ====================== GRÁFICOS: MÉDIA FORÇA / SECO ======================
 function renderForcaCharts(m) {
   const ctxTPM = document.getElementById('chartTPM');
   const ctxTPS = document.getElementById('chartTPS');
@@ -685,7 +767,7 @@ function renderForcaCharts(m) {
   });
 }
 
-// ====================== OBSERVATIONS ======================
+// ====================== OBSERVAÇÕES ======================
 function renderObs() {
   ['obs1Text','obs2Text','obs3Text'].forEach((id, i) => {
     const el = document.getElementById(id);
@@ -716,7 +798,7 @@ function saveObs() {
   renderObs();
 }
 
-// ====================== EQUIPMENT ======================
+// ====================== EQUIPAMENTOS ======================
 function renderEquipment() {
   const list = document.getElementById('equipmentList');
   if (!list) return;
@@ -803,7 +885,7 @@ async function addEquipment() {
   }
 }
 
-// ====================== SETTINGS PAGE ======================
+// ====================== PÁGINA DE CONFIGURAÇÕES ======================
 function renderSettingsPage() {
   const cfg = STATE.config;
   setValue('configMonth',           cfg.month);
@@ -866,7 +948,7 @@ function resetSettings() {
   showStatus('settingsStatus', '↺ Configurações restauradas para o padrão.', 'info');
 }
 
-// ====================== UPLOAD / MANUAL ENTRY ======================
+// ====================== UPLOAD / ENTRADA MANUAL ======================
 function initializeManualEntries() {
   const cDistrib = document.getElementById('manualEntriesDistrib');
   const cForca = document.getElementById('manualEntriesForca');
@@ -952,13 +1034,26 @@ async function saveManualEntries(area) {
 }
 
 async function handleFileUpload(event, area) {
-  const file = event.target.files[0];
+  const fileInput = event.target;
+  const file = fileInput.files[0];
   const statusId = area === 'distrib' ? `uploadStatusDistrib` : `uploadStatusForca`;
   if (!file) return;
 
-  showStatus(statusId, '⏳ Processando arquivo...', 'info');
+  showStatus(statusId, '⏳ Processando arquivo... Aguarde.', 'info', false);
+
+  if (typeof XLSX === 'undefined') {
+    showStatus(statusId, '🚨 Erro: Biblioteca XLSX não carregou. Verifique a internet.', 'error');
+    fileInput.value = '';
+    return;
+  }
 
   const reader = new FileReader();
+  
+  reader.onerror = () => {
+    showStatus(statusId, '🚨 Erro ao ler o arquivo selecionado.', 'error');
+    fileInput.value = '';
+  };
+
   reader.onload = async (e) => {
     try {
       const data = new Uint8Array(e.target.result);
@@ -967,12 +1062,15 @@ async function handleFileUpload(event, area) {
       const rows = XLSX.utils.sheet_to_json(firstSheet);
 
       const newRecords = parseXLSXRows(rows, area);
-      if (newRecords.length === 0) {
-        showStatus(statusId, '⚠️ Nenhum dado diário encontrado.', 'warning');
+      if (!newRecords || newRecords.length === 0) {
+        showStatus(statusId, '⚠️ Nenhum dado de produção encontrado na planilha.', 'warning');
+        fileInput.value = '';
         return;
       }
 
-      // Substituição Inteligente (deleta carregamentos de planilhas anteriores deste mês/área)
+      showStatus(statusId, `⏳ Salvando ${newRecords.length} registros no banco de dados...`, 'info', false);
+
+      // Substituição Inteligente
       const currentMonth = STATE.config.month;
       const targetArea = newRecords[0].area; 
       
@@ -987,17 +1085,32 @@ async function handleFileUpload(event, area) {
         .gte('date', `${currentMonth}-01`)
         .lte('date', `${currentMonth}-${lastDay}`);
 
-      const { data: dbData, error: insErr } = await sb.from('production_records').insert(newRecords).select();
-      if (insErr) throw insErr;
+      if (delErr) {
+        console.warn('Aviso ao deletar registros antigos:', delErr);
+      }
 
-      // Recarrega tudo do banco para garantir integridade após a substituição
+      // Dividir inserção em lotes se for muito grande
+      const batchSize = 500;
+      let insertedCount = 0;
+      for (let i = 0; i < newRecords.length; i += batchSize) {
+        const batch = newRecords.slice(i, i + batchSize);
+        const { error: insErr } = await sb.from('production_records').insert(batch);
+        if (insErr) throw insErr;
+        insertedCount += batch.length;
+      }
+
+      // Recarrega tudo do banco
       await loadDataFromDB();
 
-      showStatus(statusId, `✅ ${dbData.length} registros substituídos com sucesso!`, 'success');
+      showStatus(statusId, `✅ ${insertedCount} registros substituídos com sucesso!`, 'success');
     } catch (err) {
-      showStatus(statusId, '🚨 Erro na importação: ' + err.message, 'error');
+      console.error('Erro na importação:', err);
+      showStatus(statusId, '🚨 Erro na importação: ' + (err.message || 'Verifique o console.'), 'error');
+    } finally {
+      fileInput.value = ''; // Permite subir o mesmo arquivo novamente
     }
   };
+  
   reader.readAsArrayBuffer(file);
 }
 
@@ -1169,7 +1282,7 @@ function parseDateBR(val) {
   return null;
 }
 
-// ====================== DATA TABLE ======================
+// ====================== TABELA DE DADOS ======================
 function renderDataTable() {
   const tbody = document.getElementById('dataTableBody');
   if (!tbody) return;
@@ -1253,18 +1366,23 @@ function exportData() {
   a.click();
 }
 
-function showStatus(id, msg, type) {
+function showStatus(id, msg, type, autoHide = true) {
   const el = document.getElementById(id);
   if (!el) return;
   el.style.display = 'block';
   el.className = `upload-status ${type}`;
   el.textContent = msg;
   el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  setTimeout(() => { if(el) el.style.display = 'none'; }, 6000);
+  
+  if (el.hideTimeout) clearTimeout(el.hideTimeout);
+  
+  if (autoHide) {
+    el.hideTimeout = setTimeout(() => { if(el) el.style.display = 'none'; }, 6000);
+  }
 }
 
-// ====================== INIT ======================
-// --- THEME MANAGEMENT ---
+// ====================== INICIALIZAÇÃO ======================
+// --- GERENCIAMENTO DE TEMA ---
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light-theme');
   localStorage.setItem('trael-theme', isLight ? 'light' : 'dark');
@@ -1304,14 +1422,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 2. Carregar do armazenamento local como fallback imediato
   loadFromStorage();
   
-  // 3. Sync definitivo com Supabase
-  try {
-    await loadDataFromDB();
-  } catch (e) {
-    console.warn('Falha no sync inicial do DB:', e);
-  }
-
-  // 4. Set views
-  showPage('distribuicao');
+  // 3. Inicializar Drag and Drop
   initDropZones();
+
+  // 4. Checar Sessão antes de carregar o Banco (Auth Check)
+  checkSession();
 });

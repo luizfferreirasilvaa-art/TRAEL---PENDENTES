@@ -17,10 +17,36 @@
 
 <body>
 
-  <!-- ==================== SIDEBAR NAV ==================== -->
+  <!-- ==================== TELA DE LOGIN ==================== -->
+  <div id="login-overlay" class="login-overlay active">
+    <div class="login-card">
+      <div class="login-logo">
+        <h1 style="color:white; font-family:'Rajdhani', sans-serif;">SOMA <span style="color:var(--green-500)">MODULAR</span></h1>
+        <p style="color:var(--text-muted); font-size:12px; margin-top:5px;">Acesso Restrito</p>
+      </div>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" class="form-input" required placeholder="Digite seu e-mail" />
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" class="form-input" required placeholder="Digite sua senha" />
+        </div>
+        <button type="submit" class="btn-login" id="btnLogin">ENTRAR</button>
+        <div id="loginError" class="login-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== BARRA LATERAL ==================== -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <img src="logo.jpg" alt="TRAEL" class="sidebar-logo-img" />
+    </div>
+    <div class="user-profile">
+      <div id="userName" class="user-name">Usuário</div>
+      <div id="userRole" class="user-role">Carregando...</div>
     </div>
     <nav class="sidebar-nav">
       <a href="#distribuicao" class="nav-item active" data-page="distribuicao" onclick="showPage('distribuicao')">
@@ -31,13 +57,17 @@
         <span class="nav-icon"></span>
         <span class="nav-label">Média Força / SECO</span>
       </a>
-      <a href="#upload" class="nav-item" data-page="upload" onclick="showPage('upload')">
+      <a href="#upload" class="nav-item rbac-hide-visualizador" data-page="upload" onclick="showPage('upload')">
         <span class="nav-icon"></span>
         <span class="nav-label">Upload / Entrada</span>
       </a>
-      <a href="#settings" class="nav-item" data-page="settings" onclick="showPage('settings')">
+      <a href="#settings" class="nav-item rbac-hide-visualizador" data-page="settings" onclick="showPage('settings')">
         <span class="nav-icon"></span>
         <span class="nav-label">Configurações</span>
+      </a>
+      <a href="#" class="nav-item" onclick="handleLogout()" style="margin-top:auto">
+        <span class="nav-icon"></span>
+        <span class="nav-label">Sair</span>
       </a>
     </nav>
     <div class="sidebar-footer">
@@ -45,7 +75,7 @@
     </div>
   </aside>
 
-  <!-- ==================== MAIN CONTENT ==================== -->
+  <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
   <main class="main-content">
 
     <!-- ========== PAGE: DISTRIBUIÇÃO (TPD) ========== -->
@@ -252,7 +282,7 @@
       </footer>
     </div>
 
-    <!-- ========== PAGE: UPLOAD ========== -->
+    <!-- ========== PÁGINA: UPLOAD / ENTRADA ========== -->
     <div id="page-upload" class="page">
       <div class="page-inner">
         <div class="page-title-row">
@@ -267,7 +297,7 @@
         </div>
 
         <div id="uploadTabDistrib" class="upload-tab-content active">
-          <div class="upload-card">
+          <div class="upload-card rbac-hide-alimentador rbac-hide-visualizador">
             <h3 class="upload-section-title"> Importar Planilha: DISTRIBUIÇÃO</h3>
             <div class="drop-zone" id="dropZoneDistrib" onclick="document.getElementById('fileInputDistrib').click()">
               <div class="drop-icon"></div>
@@ -277,19 +307,19 @@
             </div>
             <div id="uploadStatusDistrib" class="upload-status" style="display:none"></div>
           </div>
-          <div class="upload-card">
+          <div class="upload-card rbac-hide-visualizador">
             <h3 class="upload-section-title"> Registro Manual: DISTRIBUIÇÃO</h3>
             <div id="manualEntriesDistrib"></div>
             <div class="manual-actions">
-              <button class="btn-add-entry" onclick="addManualEntry('distrib')">+ Adicionar Linha</button>
-              <button class="btn-save-entries" onclick="saveManualEntries('distrib')">💾 Salvar em Distribuição</button>
+              <button class="btn-add-entry rbac-hide-visualizador" onclick="addManualEntry('distrib')">+ Adicionar Linha</button>
+              <button class="btn-save-entries rbac-hide-visualizador" onclick="saveManualEntries('distrib')">💾 Salvar em Distribuição</button>
             </div>
             <div id="manualStatusDistrib" class="upload-status" style="display:none"></div>
           </div>
         </div>
 
         <div id="uploadTabForca" class="upload-tab-content">
-          <div class="upload-card">
+          <div class="upload-card rbac-hide-alimentador rbac-hide-visualizador">
             <h3 class="upload-section-title"> Importar Planilha: MÉDIA FORÇA / SECO</h3>
             <div class="drop-zone" id="dropZoneForca" onclick="document.getElementById('fileInputForca').click()">
               <div class="drop-icon"></div>
@@ -299,12 +329,12 @@
             </div>
             <div id="uploadStatusForca" class="upload-status" style="display:none"></div>
           </div>
-          <div class="upload-card">
+          <div class="upload-card rbac-hide-visualizador">
             <h3 class="upload-section-title"> Registro Manual: MÉDIA FORÇA / SECO</h3>
             <div id="manualEntriesForca"></div>
             <div class="manual-actions">
-              <button class="btn-add-entry" onclick="addManualEntry('forca')">+ Adicionar Linha</button>
-              <button class="btn-save-entries" onclick="saveManualEntries('forca')"> Salvar em Força/Seco</button>
+              <button class="btn-add-entry rbac-hide-visualizador" onclick="addManualEntry('forca')">+ Adicionar Linha</button>
+              <button class="btn-save-entries rbac-hide-visualizador" onclick="saveManualEntries('forca')"> Salvar em Força/Seco</button>
             </div>
             <div id="manualStatusForca" class="upload-status" style="display:none"></div>
           </div>
@@ -341,13 +371,13 @@
       </div>
     </div>
 
-    <!-- ========== PAGE: SETTINGS ========== -->
+    <!-- ========== PÁGINA: CONFIGURAÇÕES ========== -->
     <div id="page-settings" class="page">
       <div class="page-inner">
         <div class="page-title-row">
           <h2 class="page-main-title"> CONFIGURAÇÕES</h2>
         </div>
-        <div class="settings-grid">
+        <div class="settings-grid rbac-hide-alimentador rbac-hide-visualizador">
           <div class="settings-card">
             <h3 class="settings-card-title"> Metas Mensais</h3>
             <div class="settings-form">
@@ -373,7 +403,7 @@
           </div>
         </div>
         <div class="settings-actions">
-          <button class="btn-save-settings" onclick="saveSettings()"> Salvar</button>
+          <button class="btn-save-settings rbac-hide-alimentador rbac-hide-visualizador" onclick="saveSettings()"> Salvar</button>
         </div>
         <div id="settingsStatus" class="upload-status" style="display:none"></div>
       </div>
