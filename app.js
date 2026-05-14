@@ -4,8 +4,8 @@
    ===================================================== */
 
 // Configuração do Supabase
-const SUPABASE_URL = 'https://nkfnavskpbljffihepfo.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_wm-PwAAMoMLGMF9WXpOOIA_exqCcxi1';
+const SUPABASE_URL = 'https://anyybitegpybrqmvuzos.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_totv2PJ5cEmm4aZqx5ec_Q_3nCJCthE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ====================== AUTENTICAÇÃO E RBAC ======================
