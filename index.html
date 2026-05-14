@@ -82,110 +82,87 @@
     <div id="page-distribuicao" class="page active">
       <header class="dashboard-header">
         <div class="header-left">
-          <div class="company-badge"><img src="logo.jpg" alt="TRAEL" class="header-logo-img" /></div>
-          <div class="header-divider"></div>
           <div class="header-title-block">
-            <h2 class="bulletin-title">DASHBOARD: DISTRIBUIÇÃO</h2>
-            <p class="bulletin-subtitle">PRODUTIVIDADE MÉDIA × TIPO DE NÚCLEO</p>
+            <h1 class="designer-main-title" id="designerTitle">Peças Pendentes PCP Abril — 2026</h1>
+            <p class="designer-subtitle">Acompanhamento das semanas pendentes PCP Abril</p>
           </div>
         </div>
         <div class="header-right">
-          <div class="date-block">
-            <div class="date-today"><span class="date-label">HOJE</span><span class="date-value"
-                id="distribDate">—</span></div>
-            <div class="date-month"><span class="date-label">MÊS</span><span class="date-value"
-                id="distribMonth">—</span></div>
-          </div>
-          <button class="theme-toggle" id="themeBtnDistrib" onclick="toggleTheme()" title="Trocar Tema">
-            <span id="themeIconDistrib">☀️</span>
-          </button>
+          <img src="logo.jpg" alt="TRAEL" class="header-logo-img" />
         </div>
       </header>
 
-      <section class="kpi-section kpi-section-distrib">
-        <div class="kpi-card core-enr">
-          <div class="kpi-body">
-            <div class="kpi-label">Média Diária: ENR</div>
-            <div class="kpi-value" id="kpiEnrMedia">—</div>
-            <div class="kpi-sub">unid / dia</div>
-          </div>
-          <div class="kpi-tag kpi-tag-green">ENR</div>
+      <section class="kpi-row">
+        <div class="kpi-box">
+          <span class="kpi-box-label">Total de peças</span>
+          <span class="kpi-box-value" id="kpiTotalPecas">17</span>
         </div>
-        <div class="kpi-card core-jc">
-          <div class="kpi-body">
-            <div class="kpi-label">Média Diária: JC-TRI</div>
-            <div class="kpi-value" id="kpiJcMedia">—</div>
-            <div class="kpi-sub">unid / dia</div>
-          </div>
-          <div class="kpi-tag kpi-tag-blue">JC-TRI</div>
+        <div class="kpi-box">
+          <span class="kpi-box-label">Semana 16</span>
+          <span class="kpi-box-value" id="kpiSemana16">6</span>
+          <span class="kpi-box-sub">6 pedidos</span>
         </div>
-        <div class="kpi-card core-emp">
-          <div class="kpi-body">
-            <div class="kpi-label">Média Diária: EMP</div>
-            <div class="kpi-value" id="kpiEmpMedia">—</div>
-            <div class="kpi-sub">unid / dia</div>
-          </div>
-          <div class="kpi-tag kpi-tag-dark">EMP</div>
+        <div class="kpi-box">
+          <span class="kpi-box-label">Semana 17</span>
+          <span class="kpi-box-value" id="kpiSemana17">2</span>
+          <span class="kpi-box-sub">2 pedidos</span>
         </div>
-        <div class="kpi-card core-reject">
-          <div class="kpi-body">
-            <div class="kpi-label">REP - LAB</div>
-            <div class="kpi-value kpi-value-alert" id="kpiDistribReject">—</div>
-            <div class="kpi-sub">unidades reprovadas</div>
-          </div>
-          <div class="kpi-tag kpi-tag-red">LAB</div>
-        </div>
-        <div class="kpi-card core-meta">
-          <div class="kpi-body" style="padding-left:15px">
-            <div class="kpi-label">Meta Média Mensal</div>
-            <div class="kpi-value" id="kpiDistribMetaMensal">—</div>
-            <div class="kpi-sub">unid / dia</div>
-          </div>
+        <div class="kpi-box">
+          <span class="kpi-box-label">Semana 18</span>
+          <span class="kpi-box-value" id="kpiSemana18">9</span>
+          <span class="kpi-box-sub">6 pedidos</span>
         </div>
       </section>
 
-      <div class="chart-grid-blocks" style="padding: 0 28px;">
-        <div class="chart-card">
-          <div class="bi-chart-main">
-            <h3 class="section-title"> PRODUÇÃO - QUANTIDADE (DISTRIBUIÇÃO)</h3>
-            <div class="chart-canvas-wrapper" style="height: 350px;"><canvas id="chartDistribQty"></canvas></div>
-          </div>
-          <div class="bi-table-wrapper" id="distribTableContainer" style="margin-top: 20px;"></div>
-
-          <div class="upload-card" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
-            <h3 class="upload-section-title"> Registros Recentes</h3>
-            <div class="table-filters" style="margin-bottom:15px; display:flex; gap:10px;">
-              <select class="form-input" id="filterLine" onchange="filterTable()" style="max-width:200px">
-                <option value="">Todas as Linhas</option>
-                <option value="TPM">TPM</option>
-                <option value="TPD">TPD</option>
-                <option value="TPS">TPS</option>
-              </select>
-              <button class="btn-export" onclick="exportData()"> Exportar CSV</button>
-            </div>
-          </div>
+      <div class="designer-grid">
+        <div class="designer-card">
+          <h3 class="designer-card-title">Semana 16</h3>
+          <div style="height: 250px;"><canvas id="chartSemana16"></canvas></div>
         </div>
-
-        <div class="chart-card">
-          <div class="bi-chart-pct">
-            <h3 class="section-title"> PERCENTUAL DO PLANEJADO (%)</h3>
-            <div class="chart-canvas-wrapper" style="height: 300px;"><canvas id="chartDistribPct"></canvas></div>
-          </div>
+        <div class="designer-card">
+          <h3 class="designer-card-title">Semana 17</h3>
+          <div style="height: 250px;"><canvas id="chartSemana17"></canvas></div>
+        </div>
+        <div class="designer-card">
+          <h3 class="designer-card-title">Semana 18</h3>
+          <div style="height: 250px;"><canvas id="chartSemana18"></canvas></div>
         </div>
       </div>
 
-      <section class="report-section">
-        <div class="report-card">
-          <div class="report-header">
-            <h3> RELATÓRIO EXECUTIVO - DISTRIBUIÇÃO</h3>
-            <button class="btn-export-report" onclick="exportReport('distrib')"> Exportar PDF</button>
-          </div>
-          <div class="report-body" id="reportDistrib"></div>
+      <section class="table-section" style="padding-bottom: 32px;">
+        <div class="designer-card" style="width: 100%;">
+          <h3 class="designer-card-title">Comparativo Semanal</h3>
+          <div style="height: 350px;"><canvas id="chartComparativoSemanal"></canvas></div>
+        </div>
+      </section>
+
+      <section class="table-section">
+        <div class="designer-table-card">
+          <h3 class="designer-card-title">Projetos em atraso</h3>
+          <p class="designer-subtitle" style="margin-top: -15px;">Ordenado do mais atrasado para o mais recente</p>
+          
+          <table class="designer-table">
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Referência</th>
+                <th>Cliente</th>
+                <th>Potência</th>
+                <th>Núcleo</th>
+                <th>Semana</th>
+                <th>Data prevista</th>
+                <th>Atraso</th>
+              </tr>
+            </thead>
+            <tbody id="delayedProjectsBody">
+              <!-- Preenchido via app.js -->
+            </tbody>
+          </table>
         </div>
       </section>
 
       <footer class="dashboard-footer">
-        <span>© 2026 TRAEL Transformadores — Distribuição</span>
+        <span>© 2026 TRAEL Transformadores — Peças Pendentes</span>
         <span id="footerTimeDistrib">—</span>
       </footer>
     </div>

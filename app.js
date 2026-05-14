@@ -277,7 +277,7 @@ function showPage(page) {
   if (navBtn) navBtn.classList.add('active');
 
   try {
-    if (page === 'distribuicao') renderDashboardDistrib();
+    if (page === 'distribuicao') renderDesignerDashboard();
     if (page === 'forca-seco')   renderDashboardForca();
     if (page === 'settings')     renderSettingsPage();
     if (page === 'upload')       { renderDataTable(); initializeManualEntries(); }
@@ -469,28 +469,149 @@ function generateExecutiveReport(area, m) {
   return html;
 }
 
+// ====================== NOVO DASHBOARD: DESIGNER (PEÇAS PENDENTES) ======================
+function renderDesignerDashboard() {
+  const m = computeDistribMetrics();
+  
+  // 1. Atualizar KPIs do Designer
+  setText('kpiTotalPecas', 17);
+  setText('kpiSemana16', 6);
+  setText('kpiSemana17', 2);
+  setText('kpiSemana18', 9);
+  
+  // 2. Renderizar Gráficos do Designer
+  renderDesignerCharts();
+  renderComparativoSemanal();
+  
+  // 3. Renderizar Tabela de Atrasos
+  renderDelayedProjectsTable();
+}
+
+function renderComparativoSemanal() {
+  const ctx = document.getElementById('chartComparativoSemanal');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Semana 16', 'Semana 17', 'Semana 18'],
+      datasets: [
+        { label: 'JC', data: [5, 0, 1], backgroundColor: '#1d3511' },
+        { label: 'EMP', data: [1, 0, 6], backgroundColor: '#2d541b' },
+        { label: 'ENR', data: [0, 2, 2], backgroundColor: '#437d28' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, beginAtZero: true, grid: { borderDash: [5, 5], color: '#e2e8e0' } }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }
+      }
+    }
+  });
+}
+
+function renderDesignerCharts() {
+  // Semana 16: JC (5), EMP (1)
+  const ctx16 = document.getElementById('chartSemana16');
+  if (ctx16) {
+    new Chart(ctx16, {
+      type: 'bar',
+      data: {
+        labels: ['JC', 'EMP'],
+        datasets: [{
+          label: 'Pedidos',
+          data: [5, 1],
+          backgroundColor: '#437d28',
+          borderRadius: 4
+        }]
+      },
+      options: designerChartOptions()
+    });
+  }
+
+  // Semana 17: ENR (2)
+  const ctx17 = document.getElementById('chartSemana17');
+  if (ctx17) {
+    new Chart(ctx17, {
+      type: 'bar',
+      data: {
+        labels: ['ENR'],
+        datasets: [{
+          label: 'Pedidos',
+          data: [2],
+          backgroundColor: '#437d28',
+          borderRadius: 4
+        }]
+      },
+      options: designerChartOptions()
+    });
+  }
+
+  // Semana 18: ENR (2), EMP (6), JC (1)
+  const ctx18 = document.getElementById('chartSemana18');
+  if (ctx18) {
+    new Chart(ctx18, {
+      type: 'bar',
+      data: {
+        labels: ['ENR', 'EMP', 'JC'],
+        datasets: [{
+          label: 'Pedidos',
+          data: [2, 6, 1],
+          backgroundColor: '#437d28',
+          borderRadius: 4
+        }]
+      },
+      options: designerChartOptions()
+    });
+  }
+}
+
+function designerChartOptions() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { borderDash: [5, 5], color: '#e2e8e0' } },
+      x: { grid: { display: false } }
+    }
+  };
+}
+
+function renderDelayedProjectsTable() {
+  const tbody = document.getElementById('delayedProjectsBody');
+  if (!tbody) return;
+
+  const projects = [
+    { id: '65908', ref: 'TPD-398871', client: 'ETO - Energisa TO', power: '15 kVA', core: 'JC', week: '16', date: '13/04/2026', delay: '24 dias' },
+    { id: '66725', ref: 'TPD-428955', client: 'EQTL - PA', power: '150 kVA', core: 'EMP', week: '16', date: '15/04/2026', delay: '22 dias' },
+    { id: '65863', ref: 'TPD-413418', client: 'Coelba - Jacuípe', power: '10 kVA', core: 'JC', week: '16', date: '15/04/2026', delay: '22 dias' },
+    { id: '65050', ref: 'TPD-413934', client: 'Coelba - Vitória', power: '10 kVA', core: 'JC', week: '16', date: '15/04/2026', delay: '22 dias' },
+    { id: '65485', ref: 'TPD-378140', client: 'EQTL - PA', power: '10 kVA', core: 'ENR', week: '17', date: '23/04/2026', delay: '14 dias' },
+  ];
+
+  tbody.innerHTML = projects.map(p => `
+    <tr>
+      <td>${p.id}</td>
+      <td>${p.ref}</td>
+      <td>${p.client}</td>
+      <td>${p.power}</td>
+      <td><span class="badge-core">${p.core}</span></td>
+      <td>${p.week}</td>
+      <td>${p.date}</td>
+      <td><span class="badge-delay">${p.delay}</span></td>
+    </tr>
+  `).join('');
+}
+
 // ====================== RENDERIZAR DASHBOARD: DISTRIBUIÇÃO (TPD) ======================
 function renderDashboardDistrib() {
-  const m = computeDistribMetrics();
-  const cfg = STATE.config;
-
-  // Header & KPIs
-  setText('kpiEnrMedia', m.medias.ENR.toFixed(1));
-  setText('kpiJcMedia',  m.medias.JC.toFixed(1));
-  setText('kpiEmpMedia', m.medias.EMP.toFixed(1));
-  setText('kpiTotalMedia', m.medias.Total.toFixed(1));
-  setText('kpiDistribReject', m.totals.LAB);
-  setText('kpiDistribMetaMensal', cfg.metaDistribMensal);
-
-  // Charts
-  renderDistribCharts(m);
-  
-  // BI Table
-  renderBITable(m);
-  
-  // Report
-  const reportEl = document.getElementById('reportDistrib');
-  if (reportEl) reportEl.innerHTML = generateExecutiveReport('distrib', m);
+  // Mantido para compatibilidade, mas agora redirecionado no showPage
 }
 
 // ====================== RENDERIZAR DASHBOARD: MÉDIA FORÇA / SECO ======================
