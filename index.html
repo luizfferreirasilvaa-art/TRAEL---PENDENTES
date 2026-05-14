@@ -1,398 +1,130 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boletim Diário de Medição | Trael Transformadores</title>
-  <meta name="description"
-    content="Painel de controle de produção diária - Programado x Realizado - Trael Transformadores Elétricos LTDA" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peças Pendentes PCP - TRAEL</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
+    <div class="container">
+        <header>
+            <div class="header-info">
+                <h1 id="main-title">Peças Pendentes PCP Abril — 2026</h1>
+                <p class="subtitle">Acompanhamento das semanas pendentes PCP Abril</p>
+            </div>
+            <div class="logo">
+                <!-- Using a styled text logo for fidelity if image is not available -->
+                <div class="trael-logo">
+                    <span class="trael-text">TRAEL</span>
+                    <span class="trael-subtext">TRANSFORMADORES ELÉTRICOS</span>
+                </div>
+            </div>
+        </header>
 
-  <!-- ==================== TELA DE LOGIN ==================== -->
-  <div id="login-overlay" class="login-overlay active">
-    <div class="login-card">
-      <div class="login-logo">
-        <h1 style="color:white; font-family:'Rajdhani', sans-serif;">SOMA <span style="color:var(--green-500)">MODULAR</span></h1>
-        <p style="color:var(--text-muted); font-size:12px; margin-top:5px;">Acesso Restrito</p>
-      </div>
-      <form id="loginForm" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="loginEmail" class="form-input" required placeholder="Digite seu e-mail" />
-        </div>
-        <div class="form-group">
-          <label>Senha</label>
-          <input type="password" id="loginPassword" class="form-input" required placeholder="Digite sua senha" />
-        </div>
-        <button type="submit" class="btn-login" id="btnLogin">ENTRAR</button>
-        <div id="loginError" class="login-error"></div>
-      </form>
+        <section class="summary-cards">
+            <div class="card summary-card">
+                <p class="card-label">Total de peças</p>
+                <h2 id="total-pecas">17</h2>
+            </div>
+            <div class="card summary-card">
+                <p class="card-label">Semana 16</p>
+                <div class="card-value-group">
+                    <h2 id="semana-16-pecas">6</h2>
+                    <span class="card-subvalue">6 pedidos</span>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <p class="card-label">Semana 17</p>
+                <div class="card-value-group">
+                    <h2 id="semana-17-pecas">2</h2>
+                    <span class="card-subvalue">2 pedidos</span>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <p class="card-label">Semana 18</p>
+                <div class="card-value-group">
+                    <h2 id="semana-18-pecas">9</h2>
+                    <span class="card-subvalue">6 pedidos</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="weekly-charts">
+            <div class="card chart-card">
+                <h3>Semana 16</h3>
+                <canvas id="chart-semana-16"></canvas>
+            </div>
+            <div class="card chart-card">
+                <h3>Semana 17</h3>
+                <canvas id="chart-semana-17"></canvas>
+            </div>
+            <div class="card chart-card">
+                <h3>Semana 18</h3>
+                <canvas id="chart-semana-18"></canvas>
+            </div>
+        </section>
+
+        <section class="comparative-section">
+            <div class="card comparative-card">
+                <h3>Comparativo Semanal</h3>
+                <canvas id="chart-comparativo"></canvas>
+            </div>
+        </section>
+
+        <section class="upload-section">
+            <div class="card upload-card">
+                <div class="upload-header">
+                    <h3>Alimentação de Dados</h3>
+                    <p>Selecione ou arraste a planilha para atualizar o dashboard</p>
+                </div>
+                <div class="upload-area" id="drop-area">
+                    <div class="upload-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <p>Arraste sua planilha aqui ou <span>clique para buscar</span></p>
+                    <input type="file" id="file-input" accept=".xlsx, .xls, .csv" hidden>
+                </div>
+                <div id="file-info" class="file-info" style="display: none;">
+                    <p>Arquivo selecionado: <strong id="file-name"></strong></p>
+                    <button class="btn-process" id="btn-process">Processar Dados</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <div class="card table-card">
+                <div class="table-header">
+                    <h3>Projetos em atraso</h3>
+                    <p>Ordenado do mais atrasado para o mais recente</p>
+                </div>
+                <div class="table-container">
+                    <table id="atraso-table">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Referência</th>
+                                <th>Cliente</th>
+                                <th>Potência</th>
+                                <th>Núcleo</th>
+                                <th>Semana</th>
+                                <th>Data prevista</th>
+                                <th>Atraso</th>
+                            </tr>
+                        </thead>
+                        <tbody id="atraso-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
-  </div>
-
-  <!-- ==================== BARRA LATERAL ==================== -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <img src="logo.jpg" alt="TRAEL" class="sidebar-logo-img" />
-    </div>
-    <div class="user-profile">
-      <div id="userName" class="user-name">Usuário</div>
-      <div id="userRole" class="user-role">Carregando...</div>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="#distribuicao" class="nav-item active" data-page="distribuicao" onclick="showPage('distribuicao')">
-        <span class="nav-icon"></span>
-        <span class="nav-label">Distribuição (TPD)</span>
-      </a>
-      <a href="#forca-seco" class="nav-item" data-page="forca-seco" onclick="showPage('forca-seco')">
-        <span class="nav-icon"></span>
-        <span class="nav-label">Média Força / SECO</span>
-      </a>
-      <a href="#upload" class="nav-item rbac-hide-visualizador" data-page="upload" onclick="showPage('upload')">
-        <span class="nav-icon"></span>
-        <span class="nav-label">Upload / Entrada</span>
-      </a>
-      <a href="#settings" class="nav-item rbac-hide-visualizador" data-page="settings" onclick="showPage('settings')">
-        <span class="nav-icon"></span>
-        <span class="nav-label">Configurações</span>
-      </a>
-      <a href="#" class="nav-item" onclick="handleLogout()" style="margin-top:auto">
-        <span class="nav-icon"></span>
-        <span class="nav-label">Sair</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-version">v3.0.0</div>
-    </div>
-  </aside>
-
-  <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
-  <main class="main-content">
-
-    <!-- ========== PAGE: DISTRIBUIÇÃO (TPD) ========== -->
-    <div id="page-distribuicao" class="page active">
-      <header class="dashboard-header">
-        <div class="header-left">
-          <div class="header-title-block">
-            <h1 class="designer-main-title" id="designerTitle">Peças Pendentes PCP Abril — 2026</h1>
-            <p class="designer-subtitle">Acompanhamento das semanas pendentes PCP Abril</p>
-          </div>
-        </div>
-        <div class="header-right">
-          <img src="logo.jpg" alt="TRAEL" class="header-logo-img" />
-        </div>
-      </header>
-
-      <section class="kpi-row">
-        <div class="kpi-box">
-          <span class="kpi-box-label">Total de peças</span>
-          <span class="kpi-box-value" id="kpiTotalPecas">17</span>
-        </div>
-        <div class="kpi-box">
-          <span class="kpi-box-label">Semana 16</span>
-          <span class="kpi-box-value" id="kpiSemana16">6</span>
-          <span class="kpi-box-sub">6 pedidos</span>
-        </div>
-        <div class="kpi-box">
-          <span class="kpi-box-label">Semana 17</span>
-          <span class="kpi-box-value" id="kpiSemana17">2</span>
-          <span class="kpi-box-sub">2 pedidos</span>
-        </div>
-        <div class="kpi-box">
-          <span class="kpi-box-label">Semana 18</span>
-          <span class="kpi-box-value" id="kpiSemana18">9</span>
-          <span class="kpi-box-sub">6 pedidos</span>
-        </div>
-      </section>
-
-      <div class="designer-grid">
-        <div class="designer-card">
-          <h3 class="designer-card-title">Semana 16</h3>
-          <div style="height: 250px;"><canvas id="chartSemana16"></canvas></div>
-        </div>
-        <div class="designer-card">
-          <h3 class="designer-card-title">Semana 17</h3>
-          <div style="height: 250px;"><canvas id="chartSemana17"></canvas></div>
-        </div>
-        <div class="designer-card">
-          <h3 class="designer-card-title">Semana 18</h3>
-          <div style="height: 250px;"><canvas id="chartSemana18"></canvas></div>
-        </div>
-      </div>
-
-      <section class="table-section" style="padding-bottom: 32px;">
-        <div class="designer-card" style="width: 100%;">
-          <h3 class="designer-card-title">Comparativo Semanal</h3>
-          <div style="height: 350px;"><canvas id="chartComparativoSemanal"></canvas></div>
-        </div>
-      </section>
-
-      <section class="table-section">
-        <div class="designer-table-card">
-          <h3 class="designer-card-title">Projetos em atraso</h3>
-          <p class="designer-subtitle" style="margin-top: -15px;">Ordenado do mais atrasado para o mais recente</p>
-          
-          <table class="designer-table">
-            <thead>
-              <tr>
-                <th>Pedido</th>
-                <th>Referência</th>
-                <th>Cliente</th>
-                <th>Potência</th>
-                <th>Núcleo</th>
-                <th>Semana</th>
-                <th>Data prevista</th>
-                <th>Atraso</th>
-              </tr>
-            </thead>
-            <tbody id="delayedProjectsBody">
-              <!-- Preenchido via app.js -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <footer class="dashboard-footer">
-        <span>© 2026 TRAEL Transformadores — Peças Pendentes</span>
-        <span id="footerTimeDistrib">—</span>
-      </footer>
-    </div>
-
-    <!-- ========== PAGE: MÉDIA FORÇA / SECO ========== -->
-    <div id="page-forca-seco" class="page">
-      <header class="dashboard-header">
-        <div class="header-left">
-          <div class="company-badge"><img src="logo.jpg" alt="TRAEL" class="header-logo-img" /></div>
-          <div class="header-divider"></div>
-          <div class="header-title-block">
-            <h2 class="bulletin-title">DASHBOARD: MÉDIA FORÇA / SECO</h2>
-            <p class="bulletin-subtitle">PRODUÇÃO DIÁRIA × REALIZADO</p>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="date-block">
-            <div class="date-today"><span class="date-label">HOJE</span><span class="date-value" id="forcaDate">—</span>
-            </div>
-            <div class="date-month"><span class="date-label">MÊS</span><span class="date-value" id="forcaMonth">—</span>
-            </div>
-          </div>
-          <button class="theme-toggle" id="themeBtnForca" onclick="toggleTheme()" title="Trocar Tema">
-            <span id="themeIconForca">☀️</span>
-          </button>
-        </div>
-      </header>
-
-      <section class="kpi-section">
-        <div class="kpi-card core-total">
-          <div class="kpi-body" style="padding-left:15px">
-            <div class="kpi-label">Meta Média Força / SECO</div>
-            <div class="kpi-value" id="kpiForcaMeta">—</div>
-            <div class="kpi-sub">unidades / mês</div>
-          </div>
-        </div>
-        <div class="kpi-card core-total" style="border-left-color: var(--green-500)">
-          <div class="kpi-body" style="padding-left:15px">
-            <div class="kpi-label">Realizado Acumulado</div>
-            <div class="kpi-value kpi-value-green" id="kpiForcaReal">—</div>
-            <div class="kpi-sub">unidades produzidas</div>
-          </div>
-        </div>
-        <div class="kpi-card core-total" style="border-left-color: var(--warning)">
-          <div class="kpi-body" style="padding-left:15px">
-            <div class="kpi-label">Saldo do Mês</div>
-            <div class="kpi-value kpi-value-alert" id="kpiForcaSaldo">—</div>
-            <div class="kpi-sub">unidades restantes</div>
-          </div>
-        </div>
-        <div class="kpi-card kpi-card-gauge core-total" style="border-left-color: var(--accent)">
-          <div class="kpi-label" style="font-size:10px">% Atingimento</div>
-          <div class="gauge-container">
-            <canvas id="gaugeForca" width="100" height="60"></canvas>
-            <div class="gauge-center"><span class="gauge-pct" id="forcaPct">0%</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="lines-section">
-        <div class="section-header">
-          <h3 class="section-title">📋 SEGMENTAÇÃO POR LINHA (REGRA 3)</h3>
-        </div>
-        <div class="lines-grid" id="forcaLinesGrid">
-          <!-- Populated by JS -->
-        </div>
-      </section>
-
-      <section class="chart-section bi-section">
-        <div class="bi-container">
-          <div class="forca-charts-grid" style="padding: 20px;">
-            <div class="bi-chart-card" style="border:none; background:transparent;">
-              <div class="chart-header" style="padding-top:0;">
-                <h3> Produção Diária: TPM (Média Força)</h3>
-              </div>
-              <div class="chart-body" style="height:250px"><canvas id="chartTPM"></canvas></div>
-            </div>
-            <div class="bi-chart-card" style="border:none; background:transparent;">
-              <div class="chart-header" style="padding-top:0;">
-                <h3> Produção Diária: TPS (Seco)</h3>
-              </div>
-              <div class="chart-body" style="height:250px"><canvas id="chartTPS"></canvas></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-
-
-      <footer class="dashboard-footer">
-        <span>© 2026 TRAEL Transformadores — Média Força / SECO</span>
-        <span id="footerTimeForca">—</span>
-      </footer>
-    </div>
-
-    <!-- ========== PÁGINA: UPLOAD / ENTRADA ========== -->
-    <div id="page-upload" class="page">
-      <div class="page-inner">
-        <div class="page-title-row">
-          <h2 class="page-main-title">📤 ENTRADA DE DADOS E IMPORTAÇÃO</h2>
-          <p class="page-desc">Selecione a área para importar planilhas ou inserir dados manuais.</p>
-        </div>
-
-        <div class="upload-tabs">
-          <button class="upload-tab-btn active" onclick="switchUploadTab('distrib')" id="tabBtnDistrib">Distribuição
-            (TPD)</button>
-          <button class="upload-tab-btn" onclick="switchUploadTab('forca')" id="tabBtnForca">Média Força / SECO</button>
-        </div>
-
-        <div id="uploadTabDistrib" class="upload-tab-content active">
-          <div class="upload-card rbac-hide-alimentador rbac-hide-visualizador">
-            <h3 class="upload-section-title"> Importar Planilha: DISTRIBUIÇÃO</h3>
-            <div class="drop-zone" id="dropZoneDistrib" onclick="document.getElementById('fileInputDistrib').click()">
-              <div class="drop-icon"></div>
-              <p class="drop-text">Arraste a planilha de Distribuição aqui</p>
-              <input type="file" id="fileInputDistrib" accept=".xlsx,.xls,.csv" style="display:none"
-                onchange="handleFileUpload(event, 'distrib')" />
-            </div>
-            <div id="uploadStatusDistrib" class="upload-status" style="display:none"></div>
-          </div>
-          <div class="upload-card rbac-hide-visualizador">
-            <h3 class="upload-section-title"> Registro Manual: DISTRIBUIÇÃO</h3>
-            <div id="manualEntriesDistrib"></div>
-            <div class="manual-actions">
-              <button class="btn-add-entry rbac-hide-visualizador" onclick="addManualEntry('distrib')">+ Adicionar Linha</button>
-              <button class="btn-save-entries rbac-hide-visualizador" onclick="saveManualEntries('distrib')">💾 Salvar em Distribuição</button>
-            </div>
-            <div id="manualStatusDistrib" class="upload-status" style="display:none"></div>
-          </div>
-        </div>
-
-        <div id="uploadTabForca" class="upload-tab-content">
-          <div class="upload-card rbac-hide-alimentador rbac-hide-visualizador">
-            <h3 class="upload-section-title"> Importar Planilha: MÉDIA FORÇA / SECO</h3>
-            <div class="drop-zone" id="dropZoneForca" onclick="document.getElementById('fileInputForca').click()">
-              <div class="drop-icon"></div>
-              <p class="drop-text">Arraste a planilha de Força/Seco aqui</p>
-              <input type="file" id="fileInputForca" accept=".xlsx,.xls,.csv" style="display:none"
-                onchange="handleFileUpload(event, 'forca')" />
-            </div>
-            <div id="uploadStatusForca" class="upload-status" style="display:none"></div>
-          </div>
-          <div class="upload-card rbac-hide-visualizador">
-            <h3 class="upload-section-title"> Registro Manual: MÉDIA FORÇA / SECO</h3>
-            <div id="manualEntriesForca"></div>
-            <div class="manual-actions">
-              <button class="btn-add-entry rbac-hide-visualizador" onclick="addManualEntry('forca')">+ Adicionar Linha</button>
-              <button class="btn-save-entries rbac-hide-visualizador" onclick="saveManualEntries('forca')"> Salvar em Força/Seco</button>
-            </div>
-            <div id="manualStatusForca" class="upload-status" style="display:none"></div>
-          </div>
-        </div>
-
-        <div class="upload-card">
-          <h3 class="upload-section-title"> Registros Recentes</h3>
-          <div class="table-filters" style="margin-bottom:15px; display:flex; gap:10px;">
-            <select class="form-input" id="filterLine" onchange="filterTable()" style="max-width:200px">
-              <option value="">Todas as Linhas</option>
-              <option value="TPM">TPM</option>
-              <option value="TPD">TPD</option>
-              <option value="TPS">TPS</option>
-            </select>
-            <button class="btn-export" onclick="exportData()">📥 Exportar CSV</button>
-          </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Data</th>
-                  <th>Linha</th>
-                  <th>Prog.</th>
-                  <th>Real.</th>
-                  <th>Descrição</th>
-                  <th>Origem</th>
-                  <th>Ação</th>
-                </tr>
-              </thead>
-              <tbody id="dataTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========== PÁGINA: CONFIGURAÇÕES ========== -->
-    <div id="page-settings" class="page">
-      <div class="page-inner">
-        <div class="page-title-row">
-          <h2 class="page-main-title"> CONFIGURAÇÕES</h2>
-        </div>
-        <div class="settings-grid rbac-hide-alimentador rbac-hide-visualizador">
-          <div class="settings-card">
-            <h3 class="settings-card-title"> Metas Mensais</h3>
-            <div class="settings-form">
-              <div class="form-group"><label>Mês</label><input type="month" class="form-input" id="configMonth" /></div>
-              <div class="form-group"><label>Meta Total Média Força</label><input type="number" class="form-input"
-                  id="configMetaTotal" /></div>
-              <div class="form-group"><label>Meta Média TPM</label><input type="number" class="form-input"
-                  id="configMetaTPM" /></div>
-              <div class="form-group"><label>Meta Média TPD (Mensal)</label><input type="number" class="form-input"
-                  id="configMetaDistribMensal" /></div>
-              <div class="form-group"><label>Meta Média TPS</label><input type="number" class="form-input"
-                  id="configMetaTPS" /></div>
-            </div>
-          </div>
-          <div class="settings-card">
-            <h3 class="settings-card-title"> Calendário</h3>
-            <div class="settings-form">
-              <div class="form-group"><label>Dias Úteis</label><input type="number" class="form-input"
-                  id="configDiasUteis" /></div>
-              <div class="form-group"><label>Dias Trabalhados</label><input type="number" class="form-input"
-                  id="configDiasTrabalhados" /></div>
-            </div>
-          </div>
-        </div>
-        <div class="settings-actions">
-          <button class="btn-save-settings rbac-hide-alimentador rbac-hide-visualizador" onclick="saveSettings()"> Salvar</button>
-        </div>
-        <div id="settingsStatus" class="upload-status" style="display:none"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script src="app.js?v=4.2.3"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
 </body>
-
 </html>
